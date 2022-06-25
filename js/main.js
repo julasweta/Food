@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
 
+
   const tabheaderItems = document.querySelectorAll('.tabheader__item');
   const tabcontainer = document.querySelector('.tabcontainer');
   const tabheader = document.querySelector('tabheader');
@@ -9,8 +10,12 @@ document.addEventListener('DOMContentLoaded', () => {
   let secondsTable = document.querySelector('#seconds');
   let minutesTable = document.querySelector('#minutes');
   let hoursTable = document.querySelector('#hours');
+  const modal = document.querySelector('.modal');
+  const btnsTell = document.querySelectorAll('.btn_tell');
+  const modalClose = document.querySelector('.modal__close');
+  const modalDialog = document.querySelector('.modal__dialog');
 
-
+  /******************************/
   /*  ТАБИ */
   const tabcontent = {
     item: [{
@@ -79,7 +84,7 @@ document.addEventListener('DOMContentLoaded', () => {
   })
 
 
-
+  /******************************/
   /* ВСТАНОВЛЕННЯ ВІДЛІКУ ЧАСУ */
   const timenterv = setInterval(getDuration, 1000);
 
@@ -90,46 +95,150 @@ document.addEventListener('DOMContentLoaded', () => {
     endDate.setMonth(8);
     endDate.setHours(2, 0, 0);
     if (endDate >= nowDate) {
-        let my_time = (endDate - nowDate);
-        let days = my_time / 1000 / 60 / 60 / 24;
-        let daysRound = Math.floor(days);
-        let hours = my_time / 1000 / 60 / 60 - (24 * daysRound);
-        let hoursRound = Math.floor(hours);
-        let minutes = my_time / 1000 / 60 - (24 * 60 * daysRound) - (60 * hoursRound);
-        let minutesRound = Math.floor(minutes);
-        let seconds = my_time / 1000 - (24 * 60 * 60 * daysRound) - (60 * 60 * hoursRound) - (60 * minutesRound);
-        let time = hoursRound + ':' + minutesRound + ':' + seconds;
-        daysTable.innerHTML = daysRound;
-        minutesTable.innerHTML = minutesRound;
-        secondsTable.innerHTML = seconds;
-        hoursTable.innerHTML = hoursRound;
+      let my_time = (endDate - nowDate);
+      let days = my_time / 1000 / 60 / 60 / 24;
+      let daysRound = Math.floor(days);
+      let hours = my_time / 1000 / 60 / 60 - (24 * daysRound);
+      let hoursRound = Math.floor(hours);
+      let minutes = my_time / 1000 / 60 - (24 * 60 * daysRound) - (60 * hoursRound);
+      let minutesRound = Math.floor(minutes);
+      let seconds = my_time / 1000 - (24 * 60 * 60 * daysRound) - (60 * 60 * hoursRound) - (60 * minutesRound);
+      let time = hoursRound + ':' + minutesRound + ':' + seconds;
+      daysTable.innerHTML = daysRound;
+      minutesTable.innerHTML = minutesRound;
+      secondsTable.innerHTML = seconds;
+      hoursTable.innerHTML = hoursRound;
     } else {
       endDate = nowDate;
-       let my_time = (endDate - nowDate);
-       let days = my_time / 1000 / 60 / 60 / 24;
-       let daysRound = Math.floor(days);
-       let hours = my_time / 1000 / 60 / 60 - (24 * daysRound);
-       let hoursRound = Math.floor(hours);
-       let minutes = my_time / 1000 / 60 - (24 * 60 * daysRound) - (60 * hoursRound);
-       let minutesRound = Math.floor(minutes);
-       let seconds = my_time / 1000 - (24 * 60 * 60 * daysRound) - (60 * 60 * hoursRound) - (60 * minutesRound);
-       let time = hoursRound + ':' + minutesRound + ':' + seconds;
-       daysTable.innerHTML = daysRound;
-       minutesTable.innerHTML = minutesRound;
-       secondsTable.innerHTML = seconds;
-       hoursTable.innerHTML = hoursRound;
+      let my_time = (endDate - nowDate);
+      let days = my_time / 1000 / 60 / 60 / 24;
+      let daysRound = Math.floor(days);
+      let hours = my_time / 1000 / 60 / 60 - (24 * daysRound);
+      let hoursRound = Math.floor(hours);
+      let minutes = my_time / 1000 / 60 - (24 * 60 * daysRound) - (60 * hoursRound);
+      let minutesRound = Math.floor(minutes);
+      let seconds = my_time / 1000 - (24 * 60 * 60 * daysRound) - (60 * 60 * hoursRound) - (60 * minutesRound);
+      let time = hoursRound + ':' + minutesRound + ':' + seconds;
+      daysTable.innerHTML = daysRound;
+      minutesTable.innerHTML = minutesRound;
+      secondsTable.innerHTML = seconds;
+      hoursTable.innerHTML = hoursRound;
     }
 
   }
 
 
+  /******************************/
+  /*   МОДАЛЬНІ ВІКНА   */
+  /* ф-ція відкриття модального вікна */
+  function openModal() {
+    modal.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+  }
+
+  /* відкриття модального вікна */
+  btnsTell.forEach(item => {
+    item.addEventListener('click', openModal);
+  })
+
+  /*ф-ція закриття модального вікна */
+  function closeModal() {
+    modal.style.display = 'none';
+    document.body.style.overflow = '';
+    clearInterval(timerId); // очищаємо відкриття через інтервал часу, щоб не відкривалось повторно, після   того  як відкрив користувач
+  }
+
+  /*закриття модального вікна */
+  modalClose.addEventListener('click', closeModal);
+
+  /* закриття модального вікна в будь-якому місці */
+  modal.addEventListener('click', (event) => {
+    if (event.target === modal) {
+      closeModal();
+    }
+  })
+
+  /* ф-ція відкрити якщо пролистали до кінця сторінки   */
+  function openTime() {
+    if ((window.scrollY + 1 >= document.documentElement.scrollHeight - document.documentElement.clientHeight)) {
+      openModal();
+      window.removeEventListener('scroll', openTime) //  видаляємо відслідковування , щоб не відкривалось повторно, після   того  як пролистали донизу
+    }
+  }
+
+  const timerId = setTimeout(openModal, (1000 * 60));
+  window.addEventListener('scroll', openTime);
+
+  //////////////////////////
+  class Card {
+    constructor(img, alt, title, text, price, parentSelector) {
+      this.img = img;
+      this.alt = alt;
+      this.title = title;
+      this.text = text;
+      this.price = price;
+      this.parent = document.querySelector(parentSelector);
+    }
+
+
+    addBlock() {
+let element = document.createElement('div');
+element.className = 'menu__item'
+      element.innerHTML = `
+                    <img src="${this.img}" alt="${this.alt}">
+                    <h3 class="menu__item-subtitle">${this.title}"</h3>
+                    <div class = "menu__item-descr" > ${this.text}</div>
+                    <div class="menu__item-divider"></div>
+                    <div class="menu__item-price">
+                        <div class="menu__item-cost">Цена:</div>
+                        <div class="menu__item-total"><span>${this.price}</span> грн/день</div>
+                    </div>
+                `
+      this.parent.append(element);
+
+    }
+
+  }
+
+
+  new Card(
+    'img/tabs/vegy.jpg',
+    'vegy',
+    'Меню "Фитнес',
+    'Меню "Фитнес" - это новый подход к приготовлению блюд: больше свежих овощей и фруктов. Продукт активных и здоровых людей. Это абсолютно новый продукт с оптимальной ценой и высоким качеством!',
+    229,
+    '.menu__field .container'
+  ).addBlock();
+
+  new Card(
+    'img/tabs/elite.jpg',
+    'elite',
+    'Меню "Фитнес5',
+    'В меню “Премиум” мы используем не только красивый дизайн упаковки, но и качественное исполнение блюд. Красная рыба, морепродукты, фрукты - ресторанное меню без похода в ресторан!',
+    550,
+    '.menu__field .container'
+  ).addBlock();
+
+    new Card(
+      'img/tabs/post.jpg',
+      'post',
+      'Меню "Фитнес5',
+      'Меню “Постное” - это тщательный подбор ингредиентов: полное отсутствие продуктов животного происхождения, молоко из миндаля, овса, кокоса или гречки, правильное количество белков за счет тофу и импортных вегетарианских стейков.',
+      430,
+      '.menu__field .container'
+    ).addBlock();
 
 
 
-
-
-
-
+  /*  SLIDER  */
+  tns({
+    container: '.offer__slider-wrapper',
+    items: 1,
+    slideBy: 'page',
+    autoplay: true,
+    prevButton: '.offer__slider-prev',
+    nextButton: '.offer__slider-next'
+  });
 
 
 
